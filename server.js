@@ -18,8 +18,8 @@ app.use(express.json());
 
 
 // 🧠 MongoDB Connection
-// mongoose.connect("mongodb+srv://sahilashar21:LOBqKPV3GcmxNEsJ@cluster0.qbnh7lv.mongodb.net/library?retryWrites=true&w=majority&appName=Cluster0", 
-mongoose.connect("mongodb://localhost:27017/institutional_repo2",{
+mongoose.connect("mongodb+srv://sahilashar21:LOBqKPV3GcmxNEsJ@cluster0.qbnh7lv.mongodb.net/library?retryWrites=true&w=majority&appName=Cluster0", 
+// mongoose.connect("mongodb://localhost:27017/institutional_repo2",{
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
