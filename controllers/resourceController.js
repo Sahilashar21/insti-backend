@@ -102,13 +102,13 @@
 
 const QuestionPaper = require("../models/QuestionPaper");
 const ResearchPaper = require("../models/ResearchPaper");
-const LectureNote = require("../models/LectureNotes");
-const { default: LectureNotes } = require("../models/LectureNotes");
+// const LectureNote = require("../models/LectureNotes");
+// const { default: LectureNotes } = require("../models/LectureNotes");
 
 const modelMap = {
   "question-papers": QuestionPaper,
   "research-papers": ResearchPaper,
-  "lecture-notes": LectureNotes,
+  // "lecture-notes": LectureNotes,
 };
 
 // UPDATE
