@@ -1,64 +1,64 @@
-// backend/server.js
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-require("dotenv").config();
+// // backend/server.js
+// const express = require("express");
+// const mongoose = require("mongoose");
+// const cors = require("cors");
+// require("dotenv").config();
 
-const { authMiddleware: auth } = require("./middleware/authMiddleware");
-const roleMiddleware = require("./middleware/roleMiddleware");
+// const { authMiddleware: auth } = require("./middleware/authMiddleware");
+// const roleMiddleware = require("./middleware/roleMiddleware");
 
-const authRoutes = require("./routes/auth"); // 🔐 Auth routes (login, etc.)
+// const authRoutes = require("./routes/auth"); // 🔐 Auth routes (login, etc.)
 
-const app = express();
-const PORT = process.env.PORT || 5000;
+// const app = express();
+// const PORT = process.env.PORT || 5000;
 
-// 🌐 Middleware
-app.use(cors());
-app.use(express.json());
+// // 🌐 Middleware
+// app.use(cors());
+// app.use(express.json());
 
 
-// 🧠 MongoDB Connection
-mongoose.connect("mongodb+srv://sahilashar21:LOBqKPV3GcmxNEsJ@cluster0.qbnh7lv.mongodb.net/library?retryWrites=true&w=majority&appName=Cluster0", 
-// mongoose.connect("mongodb://localhost:27017/institutional_repo2",{
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log("MongoDB connected ✅"))
-.catch((err) => console.error("MongoDB error ❌", err));
+// // 🧠 MongoDB Connection
+// mongoose.connect("mongodb+srv://sahilashar21:LOBqKPV3GcmxNEsJ@cluster0.qbnh7lv.mongodb.net/library?retryWrites=true&w=majority&appName=Cluster0", 
+// // mongoose.connect("mongodb://localhost:27017/institutional_repo2",{
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// })
+// .then(() => console.log("MongoDB connected ✅"))
+// .catch((err) => console.error("MongoDB error ❌", err));
 
-// 🧪 Root Test Route
-app.get("/", (req, res) => {
-  res.send("API is working 🟢");
-});
-
-// 🔐 Auth routes
-app.use("/api/auth", authRoutes);
-
-// 🧪 Protected test routes
-// app.get("/api/admin-only", auth, roleMiddleware("admin"), (req, res) => {
-//   res.send("Welcome Admin!");
+// // 🧪 Root Test Route
+// app.get("/", (req, res) => {
+//   res.send("API is working 🟢");
 // });
 
-// app.get("/api/user-dashboard", auth, (req, res) => {
-//   res.send(`Hello ${req.user.role}, you are logged in.`);
+// // 🔐 Auth routes
+// app.use("/api/auth", authRoutes);
+
+// // 🧪 Protected test routes
+// // app.get("/api/admin-only", auth, roleMiddleware("admin"), (req, res) => {
+// //   res.send("Welcome Admin!");
+// // });
+
+// // app.get("/api/user-dashboard", auth, (req, res) => {
+// //   res.send(`Hello ${req.user.role}, you are logged in.`);
+// // });
+
+// const adminResourceRoutes = require("./routes/adminResources");
+// app.use("/api/admin/resources", adminResourceRoutes);
+
+// const accessionRoutes = require("./routes/accession");
+// app.use("/api/accession", accessionRoutes);
+
+// const resourceRoutes = require("./routes/resources");
+// app.use("/api/resources", resourceRoutes);
+
+
+// // app.use("/api/resources", require("./routes/resources"));
+
+// // 🚀 Start Server
+// app.listen(PORT, () => {
+//   console.log(`Server running on http://localhost:${PORT}`);
 // });
-
-const adminResourceRoutes = require("./routes/adminResources");
-app.use("/api/admin/resources", adminResourceRoutes);
-
-const accessionRoutes = require("./routes/accession");
-app.use("/api/accession", accessionRoutes);
-
-const resourceRoutes = require("./routes/resources");
-app.use("/api/resources", resourceRoutes);
-
-
-// app.use("/api/resources", require("./routes/resources"));
-
-// 🚀 Start Server
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
 
 // // backend/server.js
 // const express = require("express");
@@ -103,3 +103,67 @@ app.listen(PORT, () => {
 // app.get("/api/user-dashboard", auth, (req, res) => {
 //   res.send(`Hello ${req.user.role}, you are logged in.`);
 // });
+
+
+
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+require("dotenv").config();
+
+const authMiddleware = require("./middleware/authMiddleware");
+const roleMiddleware = require("./middleware/roleMiddleware");
+
+const authRoutes = require("./routes/auth");
+const adminResourceRoutes = require("./routes/adminResources");
+const accessionRoutes = require("./routes/accession");
+const resourceRoutes = require("./routes/resources");
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+/* =====================
+   🌐 Middleware
+===================== */
+app.use(cors());
+app.use(express.json());
+
+/* =====================
+   🧠 MongoDB
+===================== */
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => {
+    console.error("❌ MongoDB error:", err.message);
+    process.exit(1);
+  });
+
+/* =====================
+   🧪 Test Route
+===================== */
+app.get("/", (req, res) => {
+  res.json({ message: "API running 🟢" });
+});
+
+/* =====================
+   🔐 Routes
+===================== */
+app.use("/api/auth", authRoutes);
+
+app.use(
+  "/api/admin/resources",
+  authMiddleware,
+  roleMiddleware("admin"),
+  adminResourceRoutes
+);
+
+app.use("/api/accession", authMiddleware, accessionRoutes);
+app.use("/api/resources", authMiddleware, resourceRoutes);
+
+/* =====================
+   🚀 Start Server
+===================== */
+app.listen(PORT, () => {
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
+});
